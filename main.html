@@ -5,24 +5,146 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>I'm not a robot</title>
-    <link rel="stylesheet" href="styles.css" />
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin-top: 30px;
+      }
+
+      #h {
+        font-size: 22px;
+        margin-bottom: 20px;
+      }
+
+      #container {
+        width: 620px;
+        display: grid;
+        grid-template-columns: repeat(3, 200px);
+        grid-gap: 10px;
+        margin: 20px auto;
+      }
+
+      .tile {
+        width: 200px;
+        height: 200px;
+        border: 3px solid transparent;
+        cursor: pointer;
+        object-fit: cover;
+      }
+
+      .tile.selected {
+        border-color: blue;
+      }
+
+      #buttons {
+        margin-top: 20px;
+      }
+
+      #buttons button {
+        padding: 8px 20px;
+        font-size: 16px;
+        margin: 0 10px;
+        cursor: pointer;
+      }
+
+      #para {
+        font-size: 20px;
+        margin-top: 15px;
+        font-weight: bold;
+      }
+    </style>
   </head>
+
   <body>
     <main>
-      <!-- solution start -->
+      <h3 id="h">Please click on the identical tiles to verify that you are not a robot.</h3>
 
-<h3 id="h">Please click on the identical tiles to verify that you are not a robot.</h3>
+      <div id="container"></div>
 
-<div id="container"></div>
+      <div id="buttons">
+        <button id="reset" style="display: none;">Reset</button>
+        <button id="verify" style="display: none;">Verify</button>
+      </div>
 
-<div id="buttons">
-  <button id="reset" style="display: none;">Reset</button>
-  <button id="verify" style="display: none;">Verify</button>
-</div>
-
-<p id="para"></p>
-
+      <p id="para"></p>
     </main>
-    <script src="./script.js"></script>
+
+    <script>
+      const container = document.getElementById("container");
+      const resetBtn = document.getElementById("reset");
+      const verifyBtn = document.getElementById("verify");
+      const message = document.getElementById("para");
+
+      let selected = [];
+      let images = [];
+
+      function generateTiles() {
+        container.innerHTML = "";
+        message.innerText = "";
+        selected = [];
+
+        const baseImages = [
+          "https://picsum.photos/id/237/200/200",
+          "https://picsum.photos/id/238/200/200",
+          "https://picsum.photos/id/239/200/200",
+          "https://picsum.photos/id/240/200/200",
+          "httpsum.photos/id/241/200/200",
+          "https://picsum.photos/id/242/200/200"
+        ];
+
+        const duplicateImg = baseImages[Math.floor(Math.random() * baseImages.length)];
+
+        let unique = baseImages.filter(img => img !== duplicateImg);
+        unique = unique.sort(() => Math.random() - 0.5).slice(0, 4);
+
+        images = [...unique, duplicateImg, duplicateImg];
+        images.sort(() => Math.random() - 0.5);
+
+        images.forEach((img, index) => {
+          const tile = document.createElement("img");
+          tile.src = img;
+          tile.className = "tile";
+          tile.dataset.index = index;
+
+          tile.addEventListener("click", () => selectTile(tile));
+          container.appendChild(tile);
+        });
+
+        resetBtn.style.display = "none";
+        verifyBtn.style.display = "none";
+      }
+
+      function selectTile(tile) {
+        const index = tile.dataset.index;
+
+        if (selected.includes(index)) return;
+
+        tile.classList.add("selected");
+        selected.push(index);
+
+        if (selected.length === 2) {
+          verifyBtn.style.display = "inline-block";
+          resetBtn.style.display = "inline-block";
+        }
+      }
+
+      verifyBtn.addEventListener("click", () => {
+        const [i1, i2] = selected;
+
+        if (images[i1] === images[i2]) {
+          message.innerText = "🟢 Success! You are not a robot.";
+          message.style.color = "green";
+        } else {
+          message.innerText = "🔴 Verification failed. Try again.";
+          message.style.color = "red";
+        }
+      });
+
+      resetBtn.addEventListener("click", generateTiles);
+
+      generateTiles();
+    </script>
   </body>
 </html>

@@ -4,7 +4,7 @@ let classes = ["img1", "img2", "img3", "img4", "img5"];
 // Pick one class randomly to duplicate
 let duplicateClass = classes[Math.floor(Math.random() * classes.length)];
 
-// Create array of 6: five unique + one duplicate
+// Create array of 6 tiles: five unique + one duplicate
 let tiles = [...classes, duplicateClass];
 
 // Shuffle tiles randomly
@@ -31,19 +31,19 @@ tiles.forEach((cls, index) => {
 
 // ---------------- HANDLE CLICK ----------------
 function handleSelect(img) {
-  // Prevent selecting same image twice
+  // Prevent selecting the same tile twice
   if (selected.includes(img)) return;
 
-  // Allow only 2 selections
+  // Allow only 2 tiles to be selected
   if (selected.length === 2) return;
 
   img.classList.add("selected");
   selected.push(img);
 
-  // State 2 → show reset
+  // Show reset button after first click
   resetBtn.style.display = "inline-block";
 
-  // After 2 images clicked → show verify
+  // When 2 tiles selected → show verify
   if (selected.length === 2) {
     verifyBtn.style.display = "inline-block";
   }
@@ -53,6 +53,7 @@ function handleSelect(img) {
 resetBtn.addEventListener("click", () => {
   selected.forEach((img) => img.classList.remove("selected"));
   selected = [];
+
   resetBtn.style.display = "none";
   verifyBtn.style.display = "none";
   para.textContent = "";
@@ -67,8 +68,10 @@ verifyBtn.addEventListener("click", () => {
 
   if (c1 === c2) {
     para.textContent = "You are a human. Congratulations!";
+    para.style.color = "green";
   } else {
     para.textContent =
       "We can't verify you as a human. You selected the non-identical tiles.";
+    para.style.color = "red";
   }
 });
